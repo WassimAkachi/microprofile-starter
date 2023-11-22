@@ -1,0 +1,6 @@
+{
+  "baseUrl": "http://localhost:9080/mp-starter",
+  "endPoints": {
+    "supportMatrix": "/api/supportMatrix"
+  }
+}

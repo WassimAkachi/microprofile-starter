@@ -1,0 +1,5 @@
+import "./app/boundary/MicroprofileStarterAppElement.ts"
+import "./app/boundary/AppVersionElement.ts"
+import "./form/boundary/MpStarterFormProjectCoordinates.ts"
+import "./form/boundary/MpStarterFormVersions.ts"
+import "./form/boundary/MpStarterForm.ts"

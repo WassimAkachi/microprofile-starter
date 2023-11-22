@@ -1,0 +1,15 @@
+@charset "utf-8";
+@import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+@import "mp-bulma-styles";
+
+body {
+  font-family: 'Lato', sans-serif;
+  font-size: 18px;
+  line-height: 32px;
+  color: $mp-dark-color;
+  margin: 0;
+}
+
+.header-title {
+  font-family: 'Nunito', sans-serif;
+}
