@@ -13,9 +13,11 @@ class MpStarterForm extends BoundaryElement {
 
   protected get view(): any {
     return html`
-        <form>
-            <mps-form-group-id></mps-form-group-id>
-        </form>
+        <div class="container">
+            <form class="form">
+                <mps-form-group-id></mps-form-group-id>
+            </form>
+        </div>
     `;
   }
 }
