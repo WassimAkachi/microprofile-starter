@@ -1,0 +1,17 @@
+version: '3'
+services:
+  mp-starter:
+    image: "microprofile/start.microprofile.io:master"
+    user: wildfly
+    ports:
+      - 8443:8443
+      - 8080:8080
+    restart: always
+    environment:
+      MY_LOGLEVEL:         "INFO"
+      MY_IO_THREADS:       "2"
+      MY_TASK_MAX_THREADS: "32"
+      MY_MS_HEAP:          "512m"
+      MY_MX_HEAP:          "512m"
+      MY_META_SPACE:       "96M"
+      MY_MAX_META_SPACE:   "256m"
