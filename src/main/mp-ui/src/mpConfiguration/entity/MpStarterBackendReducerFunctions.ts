@@ -1,5 +1,5 @@
 import {MpStarterBackendConfiguration, MpStarterBackendState,} from "./MpStarterBackendState.ts";
-import {SupportMatrix} from "./Entities.ts";
+import {SupportMatrix, SupportMatrixServers} from "./Entities.ts";
 
 export const fulfillState = (state: MpStarterBackendState) => {
     state.actionState = "Fulfilled";
@@ -15,4 +15,9 @@ function _initStateIfNull(state: MpStarterBackendState) {
 export const setSupportMatrixInState = (state: MpStarterBackendState, supportMatrix?: SupportMatrix) => {
     _initStateIfNull(state);
     state.state!.supportMatrix = supportMatrix
+};
+
+export const setSupportMatrixServersInState = (state: MpStarterBackendState, supportMatrixServers?: SupportMatrixServers) => {
+    _initStateIfNull(state);
+    state.state!.supportMatrixServers = supportMatrixServers
 };

@@ -4,9 +4,12 @@ import {getInitialMpStarterFormState, mpStarterFormSliceName} from "./MpStarterF
 import {
     fulfillState,
     setArtifactIdInState,
+    setBuildToolInState,
     setGroupIdInState,
     setJavaVersionInState,
-    setMpVersionInState
+    setMpSpecsInState,
+    setMpVersionInState,
+    setRuntimeVersionInState
 } from "./MpStarterFormReducerFunctions.ts";
 
 
@@ -28,6 +31,18 @@ const reducers = {
     },
     setJavaVersion(state: MpStarterFormState, action: PayloadAction<string>) {
         setJavaVersionInState(state, action.payload);
+        fulfillState(state);
+    },
+    setBuildTool(state: MpStarterFormState, action: PayloadAction<string>) {
+        setBuildToolInState(state, action.payload);
+        fulfillState(state);
+    },
+    setRuntimeVersion(state: MpStarterFormState, action: PayloadAction<string>) {
+        setRuntimeVersionInState(state, action.payload);
+        fulfillState(state);
+    },
+    setMpSpecs(state: MpStarterFormState, action: PayloadAction<string[]>) {
+        setMpSpecsInState(state, action.payload);
         fulfillState(state);
     },
     reset(state: MpStarterFormState) {
@@ -52,6 +67,9 @@ export const {
     setArtifactId,
     setMpVersion,
     setJavaVersion,
+    setRuntimeVersion,
+    setBuildTool,
+    setMpSpecs,
     reset
 } = mpStarterFormSlice.actions;
 export default mpStarterFormSlice.reducer;

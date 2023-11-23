@@ -1,13 +1,15 @@
-import {SupportMatrix} from "../entity/Entities.ts";
+import {SupportMatrix, SupportMatrixServers} from "../entity/Entities.ts";
 import configurationService, {ConfigurationService} from "../../configuration/control/ConfigurationService.ts";
 import {BackendConfiguration} from "../../configuration/entity/ConfigurationState.ts";
-import {setSupportMatrix} from "../entity/MpStarterBackendStoreSlice.ts";
 import applicationStore from "../../redux/control/ApplicationStore.ts";
 import {
     readMpStarterBackendConfiguration,
     readMpStarterBackendState,
-    readSupportMatrix
+    readSupportMatrix,
+    readSupportMatrixServers
 } from "./MpStarterBackendStateReader.ts";
+import {ORDER_CONFIG_FETCH, registerInitialTask} from "../../app/control/MpStarterAppBootstrap.ts";
+import {changeSupportMatrix, changeSupportMatrixServers} from "./MpStarterbackendDispatcher.ts";
 
 
 export class MpStarterBackendConnector {
@@ -16,7 +18,6 @@ export class MpStarterBackendConnector {
 
     constructor(configService: ConfigurationService) {
         this._configService = configService;
-        this._backendConfiguration = undefined;
     }
 
     public init() {
@@ -27,7 +28,7 @@ export class MpStarterBackendConnector {
         }
     }
 
-    private get baseUrl() {
+    private get baseUrl(): string | undefined {
         return this._backendConfiguration?.baseUrl
     }
 
@@ -40,23 +41,84 @@ export class MpStarterBackendConnector {
         if (supportMatrix) {
             return Promise.resolve(supportMatrix)
         } else {
-            return this.init().then(_ => fetch(`${this.baseUrl}${this.endPoint('supportMatrix')}`)
+            return fetch(`${this.baseUrl}${this.endPoint('supportMatrix')}`)
                 .then(async (r: Response) => {
                         if (r.ok) {
                             const supportMatrix = await r.json().then(j => j as SupportMatrix);
-                            applicationStore.dispatch(setSupportMatrix(supportMatrix));
+                            changeSupportMatrix(supportMatrix);
                             return supportMatrix
                         } else {
                             return {} as SupportMatrix;
+                        }
+                    }
+                );
+        }
+    }
+
+    public async getSupportMatrixServers(): Promise<SupportMatrixServers> {
+        const supportMatrixServers = readSupportMatrixServers(readMpStarterBackendConfiguration(readMpStarterBackendState(applicationStore.getState())))
+        if (supportMatrixServers) {
+            return Promise.resolve(supportMatrixServers)
+        } else {
+            return this.init().then(_ => fetch(`${this.baseUrl}${this.endPoint('supportMatrixServers')}`)
+                .then(async (r: Response) => {
+                        if (r.ok) {
+                            const supportMatrixServers = await r.json().then(j => j as SupportMatrixServers);
+                            changeSupportMatrixServers(supportMatrixServers);
+                            return supportMatrixServers
+                        } else {
+                            return {} as SupportMatrixServers;
                         }
                     }
                 )
             )
         }
     }
+
+    public async downloadProject(queryParameters: Record<string, any>): Promise<void> {
+        const downloadUrl = this.createDownloadUrl(queryParameters)
+        return fetch(downloadUrl)
+            .then(r => r.blob())
+            .then(b => {
+                const file = window.URL.createObjectURL(b);
+                const anchorElement = document.createElement('a');
+                anchorElement.href = file;
+                anchorElement.setAttribute('download', `${queryParameters['artifactId']}.zip`);
+                anchorElement.click();
+            });
+    }
+
+    createDownloadUrl = (queryParameters: Record<string, any>): string => {
+        //await this.init();
+        console.debug({queryParameters})
+        const specs = queryParameters['selectedSpecs'];
+        let selectedSpecs = ""
+        if (Array.isArray(specs) && specs.length > 0) {
+            selectedSpecs = "&" + specs.map(s => 'selectedSpecs=' + encodeURIComponent(s)).join('&');
+        }
+        delete queryParameters['selectedSpecs'];
+        return `${this.baseUrl}${this.endPoint('project')}?${(new URLSearchParams(queryParameters)).toString()}${selectedSpecs}`;
+    }
 }
 
-
 const mpStarterBackendConnector = new MpStarterBackendConnector(configurationService);
-mpStarterBackendConnector.getSupportMatrix().then(_ => console.debug("SupportMatrix are loaded"));
+
+registerInitialTask({
+    order: ORDER_CONFIG_FETCH + 1,
+    task: () => mpStarterBackendConnector.init(),
+    name: 'mpStarterBackendConnector.getSupportMatrix'
+});
+
+registerInitialTask({
+    order: ORDER_CONFIG_FETCH + 10,
+    task: () => mpStarterBackendConnector.getSupportMatrix(),
+    name: 'mpStarterBackendConnector.getSupportMatrix'
+});
+
+registerInitialTask({
+    order: ORDER_CONFIG_FETCH + 10,
+    task: () => mpStarterBackendConnector.getSupportMatrixServers(),
+    name: 'mpStarterBackendConnector.getSupportMatrix'
+});
+
 export default mpStarterBackendConnector;

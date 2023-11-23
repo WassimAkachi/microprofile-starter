@@ -13,6 +13,10 @@ class StorageService {
         return serialized !== null && JSON.parse(serialized);
     }
 
+    reset(key: string = KEY): any {
+        this.save({}, key);
+    }
+
 }
 
 const storageService = new StorageService();

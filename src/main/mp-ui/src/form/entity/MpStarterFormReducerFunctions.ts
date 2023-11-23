@@ -30,3 +30,18 @@ export const setJavaVersionInState = (state: MpStarterFormState, javaVersion?: s
     _initStateIfNull(state);
     state.state!.javaVersion = javaVersion
 };
+
+export const setBuildToolInState = (state: MpStarterFormState, javaVersion?: string) => {
+    _initStateIfNull(state);
+    state.state!.buildTool = javaVersion
+};
+
+export const setRuntimeVersionInState = (state: MpStarterFormState, runtimeVersion?: string) => {
+    _initStateIfNull(state);
+    state.state!.mpRuntime = runtimeVersion
+};
+
+export const setMpSpecsInState = (state: MpStarterFormState, mpSpecs: string[]) => {
+    _initStateIfNull(state);
+    state.state!.mpSpecs = [...mpSpecs]
+};

@@ -2,6 +2,11 @@ import {appName, appRootUrl, appVersion} from "../entity/app-config.ts";
 import {fetchBackendConfiguration} from "../entity/backend-config.ts";
 import {changeBackendConfiguration} from "./ConfigurationDispatcher.ts";
 import {BackendConfiguration} from "../entity/ConfigurationState.ts";
+import {
+    ORDER_CONFIG_FETCH,
+    ORDER_PRE_CONFIG_FETCH,
+    registerInitialTask
+} from "../../app/control/MpStarterAppBootstrap.ts";
 
 const holder = {
     data: {
@@ -15,11 +20,11 @@ export class ConfigurationService {
     private _backendConfiguration?: BackendConfiguration
 
     constructor() {
-        this._init(_ => {
+        this.init(_ => {
         }).then(_r => console.debug(""))
     }
 
-    private async _init(f: (bc: BackendConfiguration) => void) {
+    async init(f: (bc: BackendConfiguration) => void) {
         if (this._backendConfiguration == undefined) {
             return fetchBackendConfiguration()
                 .then(backendConfiguration => {
@@ -45,11 +50,24 @@ export class ConfigurationService {
         if (this._backendConfiguration) {
             f(this._backendConfiguration)
         } else {
-            await this._init(f);
+            await this.init(f);
         }
     }
+
 }
 
 const configurationService = new ConfigurationService();
+
+registerInitialTask({
+    order: ORDER_PRE_CONFIG_FETCH,
+    task: fetchBackendConfiguration,
+    name: 'fetchBackendConfiguration'
+});
+
+registerInitialTask({
+    order: ORDER_CONFIG_FETCH,
+    task: () => configurationService.init(_ => {}),
+    name: 'configurationService.init'
+});
 
 export default configurationService

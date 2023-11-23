@@ -2,7 +2,7 @@ import BoundaryElement from "../../BoundaryElement.ts";
 import {html} from "lit";
 import {readMpStarterFormState, readProject} from "../control/MpStarterFormStateReader.ts";
 import {MpStarterProject} from "../entity/MpStarterFormState.ts";
-import {changeArtifactId, changeGroupId, changeReset} from "../control/MpStarterFormDispatcher.ts";
+import {changeArtifactId, changeGroupId} from "../control/MpStarterFormDispatcher.ts";
 
 class MpStarterFormProjectCoordinates extends BoundaryElement {
 
@@ -18,40 +18,44 @@ class MpStarterFormProjectCoordinates extends BoundaryElement {
         const {groupId, artifactId} = this.state as MpStarterProject;
 
         return html`
-            <form class="form"
-                  @submit="${(e: UIEvent) => this.submitForm(e)}"
-                  @cancel="${(e: UIEvent) => this.cancelForm(e)}">
-                <div class="field is-horizontal">
-                    <div class="field-body">
-                        <div class="field">
-                            <label class="label">GroupId *</label>
-                            <div class="control">
-                                <input
-                                        class="input is-primary"
-                                        type="text"
-                                        placeholder="com.example"
-                                        name="groupId"
-                                        value="${groupId}"
-                                        @keyup="${(e: UIEvent) => this.updateState(e)}"
-                                >
-                            </div>
+            <div class="field is-horizontal">
+                <div class="field-body">
+                    <div class="field">
+                        <label class="label">GroupId *</label>
+                        <div class="control">
+                            <input
+                                    class="input is-dark"
+                                    type="text"
+                                    placeholder="com.example"
+                                    name="groupId"
+                                    value="${groupId}"
+                                    required
+                                    @keyup="${(e: UIEvent) => this.updateState(e)}"
+                            >
                         </div>
-                        <div class="field">
-                            <label class="label" for="">ArtifactId *</label>
-                            <div class="control">
-                                <input
-                                        class="input is-primary"
-                                        type="text"
-                                        placeholder="demo"
-                                        name="artifactId"
-                                        value="${artifactId}"
-                                        @keyup="${(e: UIEvent) => this.updateState(e)}"
-                                >
-                            </div>
+                        <p class="help has-text-grey">
+                            Used as part of the package name. So, it must comply with the Java rules
+                        </p>
+                    </div>
+                    <div class="field">
+                        <label class="label" for="">ArtifactId *</label>
+                        <div class="control">
+                            <input
+                                    class="input is-dark"
+                                    required
+                                    type="text"
+                                    placeholder="demo"
+                                    name="artifactId"
+                                    value="${artifactId}"
+                                    @keyup="${(e: UIEvent) => this.updateState(e)}"
+                            >
                         </div>
+                        <p class="help has-text-grey">
+                            Used as part of the package name. So, it must comply with the Java rules
+                        </p>
                     </div>
                 </div>
-            </form>
+            </div>
             <!-- ${this.getProjectCoordinates(groupId, artifactId)} -->
         `;
     }
@@ -77,14 +81,6 @@ class MpStarterFormProjectCoordinates extends BoundaryElement {
         }
     }
 
-    private submitForm(e: UIEvent) {
-        e.stopPropagation();
-        e.preventDefault();
-    }
-
-    private cancelForm(_e: UIEvent) {
-        changeReset();
-    }
 }
 
 customElements.define('mps-form-project-coordinates', MpStarterFormProjectCoordinates);

@@ -1,4 +1,3 @@
-import "./ComponentsAndElements.ts";
-import configurationService from "./configuration/control/ConfigurationService.ts";
-
-configurationService.consumeBackendConfiguration(_ => console.debug("")).then()
+import {runInitialTasks} from "./app/control/MpStarterAppBootstrap.ts";
+import "./Controlls.ts"
+runInitialTasks().then(_ => import("./ComponentsAndElements.ts"));

@@ -9,10 +9,10 @@ class MicroprofileStarterAppElement extends BoundaryElement {
 
     protected get view(): any {
         return html`
-            <h1>Starter</h1>
             <mps-form></mps-form>
         `;
     }
+
 }
 
 customElements.define('mps-app', MicroprofileStarterAppElement);
